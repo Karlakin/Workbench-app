@@ -1,0 +1,12 @@
+{
+  "name": "workbench;",
+  "short_name": "workbench",
+  "display": "standalone",
+  "start_url": ".",
+  "background_color": "#0E2A4A",
+  "theme_color": "#0E2A4A",
+  "icons": [
+    { "src": "icon-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
