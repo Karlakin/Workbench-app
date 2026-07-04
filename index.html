@@ -359,7 +359,7 @@ async function connect(owner,repo,token){
   store.set('wb_cfg',JSON.stringify({owner,repo,token,branch:S.cfg.branch}));
   await loadTree();
   $('setup').hidden=true; $('hdr').hidden=false; $('tabs').hidden=false;
-  $('repoLbl').textContent=owner+'/'+repo+' · '+S.cfg.branch;
+  $('repoLbl').textContent=owner+'/'+repo+' · '+S.cfg.branch+' · v1.1';
   setView('fork');
 }
 async function loadTree(){
@@ -369,21 +369,29 @@ async function loadTree(){
   const blobs=(t.tree||[]).filter(n=>n.type==='blob'&&TEXT_EXT.includes(n.path.split('.').pop().toLowerCase())&&!n.path.split('/').some(p=>p.startsWith('.')));
   S.files=blobs.map(n=>({path:n.path,name:n.path.split('/').pop(),dirPath:n.path.includes('/')?n.path.slice(0,n.path.lastIndexOf('/')+1):'',
     ext:n.path.split('.').pop().toLowerCase(),size:n.size||0,sha:n.sha,raw:null,fm:{},body:'',mtime:0}));
-  // fetch contents in batches of 6
-  let done=0;
+  // fetch contents in batches of 6, with retry; report failures instead of hiding them
+  let done=0, failed=0;
   for(let i=0;i<S.files.length;i+=6){
     await Promise.all(S.files.slice(i,i+6).map(async f=>{
-      try{
-        const d=await gh('/repos/'+S.cfg.owner+'/'+S.cfg.repo+'/contents/'+encodePath(f.path)+'?ref='+encodeURIComponent(S.cfg.branch));
-        f.raw=b64dec(d.content); f.sha=d.sha;
-        const p=f.ext==='md'?parseFM(f.raw):{fm:{},body:f.raw};
-        f.fm=p.fm; f.body=p.body;
-        if(f.fm.created) f.mtime=new Date(f.fm.created).getTime()||0;
-      }catch(e){ f.raw=''; }
+      if(!(await fetchContent(f))) failed++;
       done++; prog(10+85*done/S.files.length);
     }));
   }
   prog(100);
+  if(failed) toast(failed+' file'+(failed>1?'s':'')+' didn\u2019t download — tap ↻ to retry');
+}
+async function fetchContent(f,tries=3){
+  for(let a=0;a<tries;a++){
+    try{
+      const d=await gh('/repos/'+S.cfg.owner+'/'+S.cfg.repo+'/contents/'+encodePath(f.path)+'?ref='+encodeURIComponent(S.cfg.branch));
+      f.raw=b64dec(d.content); f.sha=d.sha;
+      const p=f.ext==='md'?parseFM(f.raw):{fm:{},body:f.raw};
+      f.fm=p.fm; f.body=p.body;
+      if(f.fm.created&&!f.mtime) f.mtime=new Date(f.fm.created).getTime()||0;
+      return true;
+    }catch(e){ f.err=e.message; await new Promise(r=>setTimeout(r,400*(a+1))); }
+  }
+  f.raw=null; return false;
 }
 const encodePath=p=>p.split('/').map(encodeURIComponent).join('/');
 async function writeFile(path,content,message,sha){
@@ -464,16 +472,27 @@ function renderFlows(){
 }
 
 /* ================= editor ================= */
-function openFile(f){
+async function openFile(f){
   if(S.dirty&&!confirm('Discard unsaved changes?'))return;
   S.cur=f;S.dirty=false;S.editMode=false;
   $('edTitle').textContent=f.fm.title||f.name;
   $('edPath').textContent=f.path;
-  $('raw').value=f.raw||'';
   $('meta').classList.remove('open');$('metaTog').textContent='frontmatter ▸';
-  fillMeta(f);renderDoc();
   $('editor').hidden=false;document.body.style.overflow='hidden';
   $('edBody').scrollTop=0;
+  if(f.raw==null){
+    $('raw').value='';$('render').hidden=false;$('raw').hidden=true;
+    $('render').innerHTML='<p class="dim">Loading '+esc(f.name)+' from GitHub…</p>';
+    const ok=await fetchContent(f);
+    if(S.cur!==f)return;
+    if(!ok){
+      $('render').innerHTML='<p><b>Couldn\u2019t download this file.</b></p><p class="dim">'+esc(f.err||'network error')+'</p><p>Check the connection, go ‹ Back and tap the file again.</p>';
+      return;
+    }
+    $('edTitle').textContent=f.fm.title||f.name;
+  }
+  $('raw').value=f.raw||'';
+  fillMeta(f);renderDoc();
 }
 function closeEditor(){
   if(S.dirty&&!confirm('Discard unsaved changes?'))return;
@@ -520,6 +539,7 @@ $('metaApply').onclick=()=>{
 };
 async function saveCur(){
   const f=S.cur;if(!f)return;
+  if(f.raw==null){toast('This file never downloaded — reopen it before saving');return;}
   $('saveBtn').textContent='…';
   try{
     const sha=await writeFile(f.path,$('raw').value,'edit: '+f.path,f.sha);
@@ -586,7 +606,7 @@ $('connectBtn').onclick=async()=>{
     try{const c=JSON.parse(saved);$('setup').querySelector('.lead').textContent='Reconnecting to '+c.owner+'/'+c.repo+'…';
       S.cfg=c;await loadTree();
       $('setup').hidden=true;$('hdr').hidden=false;$('tabs').hidden=false;
-      $('repoLbl').textContent=c.owner+'/'+c.repo+' · '+c.branch;setView('fork');
+      $('repoLbl').textContent=c.owner+'/'+c.repo+' · '+c.branch+' · v1.1';setView('fork');
     }catch(e){$('setup').querySelector('.lead').textContent='Reconnect failed ('+e.message+'). Enter details again.';store.del('wb_cfg');}
   }
 })();
