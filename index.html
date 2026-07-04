@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0E2A4A">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>workbench;</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0E2A4A; --navy-deep:#081C33; --navy-soft:#4A5D70;
+  --cream:#F7F3EC; --paper:#FFFDF8;
+  --kraft:#C49A6C; --kraft-dark:#A67F52; --kraft-faint:rgba(196,154,108,.28);
+  --yellow:#FFF200;
+  --line:rgba(14,42,74,.14); --line-soft:rgba(14,42,74,.08);
+  --st-inbox:#C49A6C; --st-active:#0E2A4A; --st-shaped:#4A6FA5; --st-locked:#3E6B4F; --st-archived:#8B8B85;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --disp:'Quicksand',-apple-system,sans-serif;
+  --body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%}
+body{font-family:var(--body);background:var(--cream);color:var(--navy);min-height:100%;padding-bottom:calc(64px + var(--sab))}
+::selection{background:var(--yellow);color:var(--navy)}
+button{font-family:inherit;cursor:pointer;font-size:inherit}
+input,select,textarea{font-size:16px} /* prevents iOS zoom */
+:focus-visible{outline:2px solid var(--kraft-dark);outline-offset:2px}
+
+/* ---------- header ---------- */
+#hdr{position:sticky;top:0;z-index:20;background:var(--navy);color:var(--cream);padding:calc(10px + var(--sat)) 16px 10px;display:flex;align-items:center;gap:10px}
+#hdr .brand{font-family:var(--disp);font-weight:700;font-size:19px}
+#hdr .brand .semi{color:var(--yellow)}
+#hdr .repo{font-family:var(--mono);font-size:10.5px;color:rgba(247,243,236,.55);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.icoBtn{background:none;border:1px solid rgba(247,243,236,.28);color:var(--cream);border-radius:8px;font-family:var(--disp);font-weight:600;font-size:12.5px;padding:7px 11px;min-height:34px}
+.icoBtn:active{background:rgba(247,243,236,.12)}
+
+/* ---------- generic ---------- */
+main{padding:18px 16px 28px;max-width:760px;margin:0 auto}
+.viewTitle{font-family:var(--disp);font-weight:700;font-size:22px;margin-bottom:2px}
+.viewSub{color:var(--navy-soft);font-size:13px;margin-bottom:16px;line-height:1.5}
+.btn{border:1px solid transparent;border-radius:10px;font-family:var(--disp);font-weight:600;font-size:14.5px;padding:12px 18px;min-height:44px;transition:transform .06s ease}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--kraft);color:var(--navy-deep)}
+.btn.navy{background:var(--navy);color:var(--cream)}
+.btn.ghost{background:var(--paper);border-color:var(--line);color:var(--navy)}
+.btn.sm{font-size:13px;padding:8px 13px;min-height:38px}
+.pill{display:inline-block;font-family:var(--mono);font-size:10px;padding:3px 9px;border-radius:999px;color:#fff;text-transform:lowercase}
+.pill.inbox{background:var(--st-inbox);color:var(--navy-deep)}
+.pill.active{background:var(--st-active)}
+.pill.shaped{background:var(--st-shaped)}
+.pill.locked{background:var(--st-locked)}
+.pill.archived{background:var(--st-archived)}
+.empty{padding:34px 20px;text-align:center;color:var(--navy-soft);background:var(--paper);border:1px dashed var(--line);border-radius:12px;font-size:14px;line-height:1.7}
+.dim{color:var(--navy-soft);font-family:var(--mono);font-size:11px}
+
+/* ---------- setup ---------- */
+#setup{max-width:440px;margin:0 auto}
+#setup h1{font-family:var(--disp);font-weight:700;font-size:32px;line-height:1.15;margin:26px 0 4px}
+#setup h1 .semi{color:var(--kraft-dark)}
+#setup .lead{color:var(--navy-soft);font-size:14.5px;line-height:1.6;margin-bottom:22px}
+.frow{margin-bottom:14px}
+.frow label{display:block;font-family:var(--mono);font-size:11px;color:var(--navy-soft);margin-bottom:5px}
+.frow input{width:100%;font-family:var(--mono);padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--navy)}
+.note{font-size:12px;color:var(--navy-soft);line-height:1.6;margin-top:12px}
+#setupErr{color:#A33;font-size:13px;margin-top:10px;min-height:1em}
+
+/* ---------- fork ---------- */
+#forkGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.fCard{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--kraft);border-radius:12px;padding:14px;text-align:left}
+.fCard:active{border-color:var(--kraft-dark)}
+.fCard h3{font-family:var(--disp);font-weight:700;font-size:15px;word-break:break-word}
+.fCard .cnt{font-family:var(--mono);font-size:10px;color:var(--navy-soft);margin:2px 0 8px}
+.fCard .dots{display:flex;flex-wrap:wrap;gap:4px}
+.dot{font-family:var(--mono);font-size:9.5px;padding:2px 7px;border-radius:999px;color:#fff}
+
+/* ---------- files ---------- */
+#q{width:100%;font-family:var(--mono);font-size:16px;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--navy);margin-bottom:10px}
+.chipRow{display:flex;gap:7px;overflow-x:auto;padding-bottom:8px;margin-bottom:8px;-webkit-overflow-scrolling:touch}
+.chip{flex:none;font-family:var(--mono);font-size:11.5px;padding:8px 13px;border-radius:999px;border:1px solid var(--line);background:var(--paper);color:var(--navy-soft);min-height:34px}
+.chip.on{background:var(--navy);border-color:var(--navy);color:var(--cream)}
+.chip.tagc.on{background:var(--kraft);border-color:var(--kraft);color:var(--navy-deep)}
+.fileCard{width:100%;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:9px;display:block}
+.fileCard:active{background:rgba(196,154,108,.1)}
+.fileCard .t{font-family:var(--disp);font-weight:600;font-size:15px;margin-bottom:2px}
+.fileCard .p{font-family:var(--mono);font-size:10px;color:var(--navy-soft);margin-bottom:7px;word-break:break-all}
+.fileCard .meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tagmini{font-family:var(--mono);font-size:10.5px;color:var(--kraft-dark)}
+
+/* ---------- flows ---------- */
+.flowCard{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+.flowCard h3{font-family:var(--disp);font-weight:700;font-size:16px;margin-bottom:10px}
+.flowCard h3 .n{font-family:var(--mono);font-weight:400;font-size:10.5px;color:var(--navy-soft);margin-left:7px}
+.stepRow{display:flex;align-items:stretch;gap:0}
+.stepRail{width:22px;flex:none;position:relative}
+.stepRail::before{content:"";position:absolute;left:10px;top:0;bottom:0;width:1.5px;background:var(--kraft)}
+.stepRail::after{content:"";position:absolute;left:6px;top:18px;width:10px;height:10px;border-radius:50%;background:var(--cream);border:2px solid var(--navy)}
+.stepRow:first-child .stepRail::before{top:18px}
+.stepRow:last-child .stepRail::before{bottom:calc(100% - 18px)}
+.step{flex:1;border:1.5px solid var(--navy);border-radius:10px;background:var(--cream);padding:9px 13px;margin:4px 0;text-align:left;min-height:44px}
+.step:active{background:var(--yellow)}
+.step .sn{font-family:var(--mono);font-size:9.5px;color:var(--kraft-dark);display:block}
+.step .st{font-family:var(--disp);font-weight:600;font-size:13.5px}
+
+/* ---------- editor (full-screen sheet) ---------- */
+#editor{position:fixed;inset:0;z-index:30;background:var(--cream);display:flex;flex-direction:column}
+#edHead{background:var(--navy);color:var(--cream);padding:calc(8px + var(--sat)) 12px 8px;display:flex;align-items:center;gap:8px}
+#edHead .ti{flex:1;min-width:0}
+#edTitle{font-family:var(--disp);font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#edPath{font-family:var(--mono);font-size:9.5px;color:rgba(247,243,236,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#edBody{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(20px + var(--sab))}
+#metaTog{width:100%;text-align:left;background:var(--paper);border:0;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--navy-soft);padding:11px 16px}
+#meta{background:var(--paper);border-bottom:1px solid var(--line);padding:14px 16px;display:none}
+#meta.open{display:block}
+.mrow{margin-bottom:11px}
+.mrow label{display:block;font-family:var(--mono);font-size:10.5px;color:var(--navy-soft);margin-bottom:4px}
+.mrow input,.mrow select{width:100%;font-family:var(--mono);padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--cream);color:var(--navy)}
+.mrow .half{display:flex;gap:8px}
+#linkList a{display:block;font-family:var(--mono);font-size:11.5px;color:var(--navy);background:var(--cream);border:1px solid var(--line);border-radius:7px;padding:9px 11px;text-decoration:none;margin-bottom:5px}
+#render{padding:22px 18px;font-size:16px;line-height:1.65;max-width:72ch;margin:0 auto}
+#render h1,#render h2,#render h3{font-family:var(--disp);font-weight:700;line-height:1.25;margin:1.2em 0 .45em}
+#render h1{font-size:24px;margin-top:.2em}
+#render h2{font-size:19px;border-bottom:1px solid var(--kraft-faint);padding-bottom:.22em}
+#render h3{font-size:16px}
+#render p{margin:.65em 0}
+#render ul,#render ol{margin:.65em 0 .65em 1.35em}
+#render li{margin:.26em 0}
+#render code{font-family:var(--mono);font-size:.85em;background:var(--paper);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px}
+#render pre{background:var(--navy-deep);color:var(--cream);border-radius:9px;padding:13px 15px;overflow-x:auto;margin:.85em 0}
+#render pre code{background:none;border:0;color:inherit;font-size:12.5px;line-height:1.55}
+#render blockquote{border-left:3px solid var(--kraft);padding:2px 0 2px 14px;color:var(--navy-soft);margin:.75em 0}
+#render a{color:var(--kraft-dark)}
+#render a.ilink{color:var(--navy);background:linear-gradient(transparent 65%,var(--yellow) 65%);text-decoration:none;font-weight:500}
+#render hr{border:0;border-top:1px solid var(--kraft-faint);margin:1.3em 0}
+#render table{border-collapse:collapse;margin:.85em 0;width:100%}
+#render th,#render td{padding:7px 10px;font-size:13px;border-bottom:1px solid var(--line-soft);text-align:left}
+#render th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;background:var(--paper)}
+#raw{width:100%;min-height:64vh;border:0;background:transparent;padding:18px 16px;font-family:var(--mono);font-size:14px;line-height:1.6;color:var(--navy);resize:none}
+#raw:focus{outline:none}
+
+/* ---------- tab bar ---------- */
+#tabs{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--navy);display:flex;padding:6px 8px calc(6px + var(--sab))}
+.tb{flex:1;background:none;border:0;color:rgba(247,243,236,.62);font-family:var(--disp);font-weight:600;font-size:11.5px;padding:8px 4px 6px;border-radius:10px;position:relative;min-height:48px}
+.tb .g{display:block;font-size:17px;margin-bottom:1px}
+.tb.on{color:#fff}
+.tb.on::after{content:"";position:absolute;left:26%;right:26%;bottom:3px;height:3px;background:var(--yellow);border-radius:2px}
+.tb.cap{color:var(--navy-deep);background:var(--kraft);margin:0 4px;border-radius:12px}
+.tb.cap:active{background:#D2A97C}
+
+/* toast + progress */
+#toast{position:fixed;bottom:calc(76px + var(--sab));left:50%;transform:translateX(-50%) translateY(90px);background:var(--navy);color:var(--cream);font-family:var(--disp);font-weight:600;font-size:13px;padding:11px 18px;border-radius:10px;transition:transform .25s ease;z-index:60;border-left:4px solid var(--yellow);max-width:86vw}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#prog{position:fixed;top:0;left:0;height:3px;background:var(--yellow);width:0;z-index:40;transition:width .2s ease}
+
+/* modal */
+.modalBg{position:fixed;inset:0;background:rgba(8,28,51,.55);display:flex;align-items:flex-end;justify-content:center;z-index:50}
+.modal{background:var(--paper);border-radius:16px 16px 0 0;padding:20px 18px calc(20px + var(--sab));width:100%;max-width:560px;max-height:82vh;overflow:auto}
+.modal h3{font-family:var(--disp);font-weight:700;font-size:18px;margin-bottom:14px}
+.modalBtns{display:flex;gap:10px;margin-top:14px}
+.modalBtns .btn{flex:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (min-width:700px){ .modalBg{align-items:center} .modal{border-radius:16px} }
+</style>
+</head>
+<body>
+
+<div id="prog"></div>
+
+<header id="hdr" hidden>
+  <span class="brand">workbench<span class="semi">;</span></span>
+  <span class="repo" id="repoLbl"></span>
+  <button class="icoBtn" id="refreshBtn">↻</button>
+  <button class="icoBtn" id="settingsBtn">⚙</button>
+</header>
+
+<main>
+
+  <section id="setup">
+    <h1>Harvest anywhere<span class="semi">.</span></h1>
+    <p class="lead">Your notes live in a private GitHub repo. This app reads and writes them through the GitHub API — every save is a commit. The token stays on this device only.</p>
+    <div class="frow"><label for="sOwner">github username</label><input id="sOwner" autocapitalize="none" autocorrect="off" placeholder="karl…"></div>
+    <div class="frow"><label for="sRepo">notes repository</label><input id="sRepo" autocapitalize="none" autocorrect="off" placeholder="workbench-space"></div>
+    <div class="frow"><label for="sToken">fine-grained access token</label><input id="sToken" type="password" autocapitalize="none" placeholder="github_pat_…"></div>
+    <button class="btn navy" id="connectBtn" style="width:100%">Connect</button>
+    <div id="setupErr"></div>
+    <p class="note">Token setup: github.com → Settings → Developer settings → Fine-grained tokens → scope it to <b>only</b> the notes repo, permission <b>Contents: read &amp; write</b>, 90-day expiry. Nothing else.</p>
+  </section>
+
+  <section id="forkView" hidden>
+    <div class="viewTitle">Fork</div>
+    <div class="viewSub">The workspace by folder. Tap a branch to see its files.</div>
+    <div id="forkGrid"></div>
+  </section>
+
+  <section id="filesView" hidden>
+    <div class="viewTitle">Files</div>
+    <div class="viewSub" id="filesSub"></div>
+    <input id="q" type="search" placeholder="search titles, names, tags…">
+    <div class="chipRow" id="statusChips"></div>
+    <div class="chipRow" id="tagBar"></div>
+    <div id="fileList"></div>
+  </section>
+
+  <section id="flowsView" hidden>
+    <div class="viewTitle">Flows</div>
+    <div class="viewSub">Files with <b>flow:</b> in their frontmatter, ordered by <b>step:</b>.</div>
+    <div id="flowList"></div>
+  </section>
+
+</main>
+
+<div id="editor" hidden>
+  <div id="edHead">
+    <button class="icoBtn" id="closeBtn">‹ Back</button>
+    <div class="ti"><div id="edTitle"></div><div id="edPath"></div></div>
+    <button class="icoBtn" id="toggleBtn">Edit</button>
+    <button class="icoBtn" id="saveBtn" style="border-color:var(--yellow)">Save</button>
+  </div>
+  <div id="edBody">
+    <button id="metaTog">frontmatter ▸</button>
+    <div id="meta">
+      <div class="mrow"><label for="mTitle">title</label><input id="mTitle"></div>
+      <div class="mrow"><label>type / status</label>
+        <div class="half">
+          <select id="mType"><option></option><option>idea</option><option>note</option><option>project</option><option>reference</option><option>flow-step</option></select>
+          <select id="mStatus"><option></option><option>inbox</option><option>active</option><option>shaped</option><option>locked</option><option>archived</option></select>
+        </div>
+      </div>
+      <div class="mrow"><label for="mTags">tags (comma separated)</label><input id="mTags" autocapitalize="none"></div>
+      <div class="mrow"><label>flow / step</label>
+        <div class="half"><input id="mFlow" autocapitalize="none" style="flex:2"><input id="mStep" type="number" min="1" style="flex:1"></div>
+      </div>
+      <div class="mrow"><label>links</label><div id="linkList"></div></div>
+      <button class="btn primary sm" id="metaApply" style="width:100%">Apply to file</button>
+    </div>
+    <div id="render"></div>
+    <textarea id="raw" hidden spellcheck="false" autocapitalize="sentences"></textarea>
+  </div>
+</div>
+
+<nav id="tabs" hidden>
+  <button class="tb on" data-v="fork"><span class="g">⑂</span>Fork</button>
+  <button class="tb" data-v="files"><span class="g">☰</span>Files</button>
+  <button class="tb cap" id="captureBtn"><span class="g">＋</span>Capture</button>
+  <button class="tb" data-v="flows"><span class="g">→</span>Flows</button>
+</nav>
+
+<div id="toast"></div>
+<script>
+"use strict";
+/* ================= state ================= */
+const S={ cfg:null, files:[], view:'fork', cur:null, fStatus:null, fTag:null, fDir:null, q:'', editMode:false, dirty:false, sha:{} };
+const TEXT_EXT=['md','txt','markdown','csv','json','yaml','yml'];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2400);}
+function prog(p){$('prog').style.width=p>=100?'0':p+'%';}
+const store={ get(k){try{return localStorage.getItem(k)}catch(e){return store._m&&store._m[k]}},
+  set(k,v){try{localStorage.setItem(k,v)}catch(e){(store._m=store._m||{})[k]=v}},
+  del(k){try{localStorage.removeItem(k)}catch(e){if(store._m)delete store._m[k]}} };
+
+/* ================= utf-8 <-> base64 ================= */
+function b64enc(str){const b=new TextEncoder().encode(str);let s='';for(let i=0;i<b.length;i+=8192)s+=String.fromCharCode.apply(null,b.subarray(i,i+8192));return btoa(s);}
+function b64dec(b64){const bin=atob(b64.replace(/\n/g,''));const b=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);return new TextDecoder().decode(b);}
+
+/* ================= frontmatter ================= */
+function parseFM(text){
+  const fm={}; let body=text;
+  if(text.startsWith('---')){
+    const end=text.indexOf('\n---',3);
+    if(end>-1){
+      const block=text.slice(3,end).trim(); body=text.slice(end+4).replace(/^\r?\n/,'').replace(/^\r?\n/,'');
+      for(const line of block.split(/\r?\n/)){
+        const m=line.match(/^([A-Za-z_][\w-]*)\s*:\s*(.*)$/); if(!m) continue;
+        let v=m[2].trim();
+        if(v.startsWith('[')&&v.endsWith(']')) v=v.slice(1,-1).split(',').map(x=>x.trim().replace(/^['"]|['"]$/g,'')).filter(Boolean);
+        else if(/^-?\d+(\.\d+)?$/.test(v)) v=Number(v);
+        else v=v.replace(/^['"]|['"]$/g,'');
+        fm[m[1]]=v;
+      }
+    }
+  }
+  return {fm, body};
+}
+function buildFM(fm){
+  const order=['title','type','status','tags','flow','step','links','created','updated'];
+  const keys=[...order.filter(k=>k in fm), ...Object.keys(fm).filter(k=>!order.includes(k))];
+  const lines=keys.map(k=>{
+    let v=fm[k];
+    if(v===''||v==null||(Array.isArray(v)&&!v.length)) return null;
+    if(Array.isArray(v)) v='['+v.join(', ')+']';
+    return k+': '+v;
+  }).filter(Boolean);
+  return lines.length ? '---\n'+lines.join('\n')+'\n---\n\n' : '';
+}
+
+/* ================= markdown renderer ================= */
+function md(src){
+  const fences=[];
+  src=src.replace(/```(\w*)\n([\s\S]*?)```/g,(_,lang,code)=>{ fences.push('<pre><code>'+esc(code)+'</code></pre>'); return '\u0000F'+(fences.length-1)+'\u0000'; });
+  let h=esc(src);
+  // tables
+  h=h.replace(/((?:^\|.*\|\s*$\n?)+)/gm, block=>{
+    const rows=block.trim().split('\n').map(r=>r.replace(/^\||\|$/g,'').split('|').map(c=>c.trim()));
+    if(rows.length<2||!/^[:\-\s|]+$/.test(rows[1].join('|'))) return block;
+    const head='<tr>'+rows[0].map(c=>'<th>'+c+'</th>').join('')+'</tr>';
+    const body=rows.slice(2).map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('');
+    return '<table><thead>'+head+'</thead><tbody>'+body+'</tbody></table>\n';
+  });
+  h=h.replace(/^######\s+(.*)$/gm,'<h6>$1</h6>').replace(/^#####\s+(.*)$/gm,'<h5>$1</h5>')
+     .replace(/^####\s+(.*)$/gm,'<h4>$1</h4>').replace(/^###\s+(.*)$/gm,'<h3>$1</h3>')
+     .replace(/^##\s+(.*)$/gm,'<h2>$1</h2>').replace(/^#\s+(.*)$/gm,'<h1>$1</h1>')
+     .replace(/^(?:---|\*\*\*)\s*$/gm,'<hr>')
+     .replace(/^&gt;\s?(.*)$/gm,'<blockquote>$1</blockquote>');
+  // lists
+  h=h.replace(/((?:^[ \t]*(?:[-*+]|\d+\.)\s+.*$\n?)+)/gm, block=>{
+    const ordered=/^\s*\d+\./.test(block);
+    const items=block.trim().split('\n').map(l=>'<li>'+l.replace(/^[ \t]*(?:[-*+]|\d+\.)\s+/,'')+'</li>').join('');
+    return (ordered?'<ol>':'<ul>')+items+(ordered?'</ol>':'</ul>')+'\n';
+  });
+  // inline
+  h=h.replace(/`([^`]+)`/g,'<code>$1</code>')
+     .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+     .replace(/(^|[^*])\*([^*\n]+)\*/g,'$1<em>$2</em>')
+     .replace(/\[\[([^\]]+)\]\]/g,(_,n)=>'<a href="#" class="ilink" data-open="'+esc(n)+'">'+esc(n)+'</a>')
+     .replace(/\[([^\]]+)\]\(([^)]+)\)/g,(m,t,u)=> /\.(md|txt|markdown)$/i.test(u)
+        ? '<a href="#" class="ilink" data-open="'+u+'">'+t+'</a>'
+        : '<a href="'+u+'" target="_blank" rel="noopener">'+t+'</a>');
+  // paragraphs
+  h=h.split(/\n{2,}/).map(b=>{
+    b=b.trim(); if(!b) return '';
+    if(/^<(h\d|ul|ol|pre|blockquote|table|hr|div)/.test(b)) return b;
+    if(b.startsWith('\u0000F')) return b;
+    return '<p>'+b.replace(/\n/g,'<br>')+'</p>';
+  }).join('\n');
+  h=h.replace(/(<\/blockquote>)\n?(<blockquote>)/g,'<br>');
+  return h.replace(/\u0000F(\d+)\u0000/g,(_,i)=>fences[i]);
+}
+
+/* ================= github api ================= */
+async function gh(path,opts={}){
+  const r=await fetch('https://api.github.com'+path,Object.assign({},opts,{headers:Object.assign({
+    'Authorization':'Bearer '+S.cfg.token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},opts.headers||{})}));
+  if(r.status===401||r.status===403) throw new Error('Token rejected ('+r.status+'). Check scope and expiry.');
+  if(r.status===404) throw new Error('Not found: '+path);
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(d.message||('GitHub error '+r.status));
+  return d;
+}
+async function connect(owner,repo,token){
+  S.cfg={owner,repo,token,branch:null};
+  const info=await gh('/repos/'+owner+'/'+repo);
+  S.cfg.branch=info.default_branch;
+  store.set('wb_cfg',JSON.stringify({owner,repo,token,branch:S.cfg.branch}));
+  await loadTree();
+  $('setup').hidden=true; $('hdr').hidden=false; $('tabs').hidden=false;
+  $('repoLbl').textContent=owner+'/'+repo+' · '+S.cfg.branch;
+  setView('fork');
+}
+async function loadTree(){
+  prog(8);
+  const t=await gh('/repos/'+S.cfg.owner+'/'+S.cfg.repo+'/git/trees/'+encodeURIComponent(S.cfg.branch)+'?recursive=1');
+  if(t.truncated) toast('Large repo — listing truncated');
+  const blobs=(t.tree||[]).filter(n=>n.type==='blob'&&TEXT_EXT.includes(n.path.split('.').pop().toLowerCase())&&!n.path.split('/').some(p=>p.startsWith('.')));
+  S.files=blobs.map(n=>({path:n.path,name:n.path.split('/').pop(),dirPath:n.path.includes('/')?n.path.slice(0,n.path.lastIndexOf('/')+1):'',
+    ext:n.path.split('.').pop().toLowerCase(),size:n.size||0,sha:n.sha,raw:null,fm:{},body:'',mtime:0}));
+  // fetch contents in batches of 6
+  let done=0;
+  for(let i=0;i<S.files.length;i+=6){
+    await Promise.all(S.files.slice(i,i+6).map(async f=>{
+      try{
+        const d=await gh('/repos/'+S.cfg.owner+'/'+S.cfg.repo+'/contents/'+encodePath(f.path)+'?ref='+encodeURIComponent(S.cfg.branch));
+        f.raw=b64dec(d.content); f.sha=d.sha;
+        const p=f.ext==='md'?parseFM(f.raw):{fm:{},body:f.raw};
+        f.fm=p.fm; f.body=p.body;
+        if(f.fm.created) f.mtime=new Date(f.fm.created).getTime()||0;
+      }catch(e){ f.raw=''; }
+      done++; prog(10+85*done/S.files.length);
+    }));
+  }
+  prog(100);
+}
+const encodePath=p=>p.split('/').map(encodeURIComponent).join('/');
+async function writeFile(path,content,message,sha){
+  const body={message,content:b64enc(content),branch:S.cfg.branch};
+  if(sha) body.sha=sha;
+  const d=await gh('/repos/'+S.cfg.owner+'/'+S.cfg.repo+'/contents/'+encodePath(path),{method:'PUT',body:JSON.stringify(body)});
+  return d.content.sha;
+}
+
+/* ================= views ================= */
+function setView(v){
+  S.view=v;
+  document.querySelectorAll('.tb[data-v]').forEach(t=>t.classList.toggle('on',t.dataset.v===v));
+  for(const [id,name] of [['forkView','fork'],['filesView','files'],['flowsView','flows']]) $(id).hidden=v!==name;
+  window.scrollTo(0,0);
+  if(v==='fork')renderFork(); if(v==='files')renderFiles(); if(v==='flows')renderFlows();
+}
+document.querySelectorAll('.tb[data-v]').forEach(t=>t.onclick=()=>setView(t.dataset.v));
+
+function renderFork(){
+  const dirs={};
+  S.files.forEach(f=>{ const top=f.dirPath?f.dirPath.split('/')[0]:'(root)';
+    const d=dirs[top]=dirs[top]||{n:0,st:{}}; d.n++;
+    if(f.fm.status)d.st[f.fm.status]=(d.st[f.fm.status]||0)+1; });
+  const names=Object.keys(dirs).sort();
+  if(!names.length){ $('forkGrid').innerHTML='<div class="empty">Empty workspace.<br>Tap <b>＋ Capture</b> to create the first note — it lands in _INBOX/ automatically.</div>'; return; }
+  $('forkGrid').innerHTML=names.map(n=>{const d=dirs[n];
+    const dots=Object.entries(d.st).map(([s,c])=>'<span class="dot" style="background:var(--st-'+s+')'+(s==='inbox'?';color:var(--navy-deep)':'')+'">'+s+' '+c+'</span>').join('');
+    return '<button class="fCard" data-d="'+esc(n)+'"><h3>'+esc(n)+'</h3><div class="cnt">'+d.n+' files</div><div class="dots">'+dots+'</div></button>';}).join('');
+  $('forkGrid').querySelectorAll('.fCard').forEach(c=>c.onclick=()=>{S.fDir=c.dataset.d==='(root)'?'':c.dataset.d;S.q='';$('q').value='';setView('files');});
+}
+
+function matches(f){
+  if(S.fDir!=null&&(S.fDir===''?f.dirPath!=='':f.dirPath.split('/')[0]!==S.fDir))return false;
+  if(S.fStatus&&f.fm.status!==S.fStatus)return false;
+  if(S.fTag&&!(Array.isArray(f.fm.tags)?f.fm.tags:[f.fm.tags]).includes(S.fTag))return false;
+  if(S.q){const q=S.q.toLowerCase();
+    const hay=(f.name+' '+f.path+' '+(f.fm.title||'')+' '+(Array.isArray(f.fm.tags)?f.fm.tags.join(' '):f.fm.tags||'')+' '+(f.fm.flow||'')).toLowerCase();
+    if(!hay.includes(q)&&!(f.body||'').toLowerCase().includes(q))return false;}
+  return true;
+}
+function renderFiles(){
+  const rows=S.files.filter(matches).sort((a,b)=>(b.mtime-a.mtime)||a.path.localeCompare(b.path));
+  $('filesSub').textContent=rows.length+' of '+S.files.length+' files'+(S.fDir!=null?' · in '+(S.fDir||'root'):'');
+  const stats=['inbox','active','shaped','locked','archived'];
+  const dirChip=S.fDir!=null?'<button class="chip on" id="dirChip">📁 '+esc(S.fDir||'root')+' ✕</button>':'';
+  $('statusChips').innerHTML=dirChip+stats.map(s=>'<button class="chip'+(S.fStatus===s?' on':'')+'" data-s="'+s+'">'+s+'</button>').join('');
+  if(S.fDir!=null)$('dirChip').onclick=()=>{S.fDir=null;renderFiles();};
+  $('statusChips').querySelectorAll('.chip[data-s]').forEach(c=>c.onclick=()=>{S.fStatus=S.fStatus===c.dataset.s?null:c.dataset.s;renderFiles();});
+  const counts={};
+  S.files.forEach(f=>(Array.isArray(f.fm.tags)?f.fm.tags:f.fm.tags?[f.fm.tags]:[]).forEach(t=>counts[t]=(counts[t]||0)+1));
+  const top=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,12);
+  $('tagBar').innerHTML=top.map(([t,c])=>'<button class="chip tagc'+(S.fTag===t?' on':'')+'" data-t="'+esc(t)+'">#'+esc(t)+' '+c+'</button>').join('');
+  $('tagBar').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{S.fTag=S.fTag===c.dataset.t?null:c.dataset.t;renderFiles();});
+  if(!rows.length){$('fileList').innerHTML='<div class="empty">Nothing matches. Clear a filter, or capture something new.</div>';return;}
+  $('fileList').innerHTML=rows.map(f=>'<button class="fileCard" data-i="'+S.files.indexOf(f)+'">'+
+    '<div class="t">'+esc(f.fm.title||f.name)+'</div><div class="p">'+esc(f.path)+'</div><div class="meta">'+
+    (f.fm.status?'<span class="pill '+esc(f.fm.status)+'">'+esc(f.fm.status)+'</span>':'')+
+    (Array.isArray(f.fm.tags)?f.fm.tags:f.fm.tags?[f.fm.tags]:[]).map(t=>'<span class="tagmini">#'+esc(String(t))+'</span>').join('')+
+    (f.fm.flow?'<span class="dim">→ '+esc(f.fm.flow)+(f.fm.step?' · '+f.fm.step:'')+'</span>':'')+
+    '</div></button>').join('');
+  $('fileList').querySelectorAll('.fileCard').forEach(c=>c.onclick=()=>openFile(S.files[+c.dataset.i]));
+}
+$('q').addEventListener('input',e=>{S.q=e.target.value.trim();renderFiles();});
+
+function renderFlows(){
+  const g={};
+  S.files.forEach(f=>{if(f.fm.flow)(g[f.fm.flow]=g[f.fm.flow]||[]).push(f);});
+  const names=Object.keys(g).sort();
+  if(!names.length){$('flowList').innerHTML='<div class="empty">No flows yet.<br>Add <b>flow: my-flow</b> and <b>step: 1</b> to a file\u2019s frontmatter and it appears here.</div>';return;}
+  $('flowList').innerHTML=names.map(n=>{
+    const steps=g[n].sort((a,b)=>(a.fm.step||999)-(b.fm.step||999));
+    return '<div class="flowCard"><h3>'+esc(n)+'<span class="n">'+steps.length+' steps</span></h3>'+
+      steps.map(f=>'<div class="stepRow"><div class="stepRail"></div><button class="step" data-i="'+S.files.indexOf(f)+'">'+
+      '<span class="sn">'+(f.fm.step?'step '+f.fm.step:'unordered')+'</span><span class="st">'+esc(f.fm.title||f.name)+'</span></button></div>').join('')+'</div>';
+  }).join('');
+  $('flowList').querySelectorAll('.step').forEach(s=>s.onclick=()=>openFile(S.files[+s.dataset.i]));
+}
+
+/* ================= editor ================= */
+function openFile(f){
+  if(S.dirty&&!confirm('Discard unsaved changes?'))return;
+  S.cur=f;S.dirty=false;S.editMode=false;
+  $('edTitle').textContent=f.fm.title||f.name;
+  $('edPath').textContent=f.path;
+  $('raw').value=f.raw||'';
+  $('meta').classList.remove('open');$('metaTog').textContent='frontmatter ▸';
+  fillMeta(f);renderDoc();
+  $('editor').hidden=false;document.body.style.overflow='hidden';
+  $('edBody').scrollTop=0;
+}
+function closeEditor(){
+  if(S.dirty&&!confirm('Discard unsaved changes?'))return;
+  S.dirty=false;S.cur=null;$('editor').hidden=true;document.body.style.overflow='';
+  if(S.view==='files')renderFiles(); if(S.view==='flows')renderFlows(); if(S.view==='fork')renderFork();
+}
+$('closeBtn').onclick=closeEditor;
+function renderDoc(){
+  const f=S.cur;
+  $('render').hidden=S.editMode;$('raw').hidden=!S.editMode;
+  $('toggleBtn').textContent=S.editMode?'Preview':'Edit';
+  if(!S.editMode){
+    const {body}=parseFM($('raw').value);
+    $('render').innerHTML=md(f.ext==='md'?body:'```\n'+$('raw').value+'\n```');
+    $('render').querySelectorAll('[data-open]').forEach(a=>a.onclick=e=>{e.preventDefault();jumpTo(a.dataset.open);});
+  }
+}
+function jumpTo(ref){
+  ref=ref.replace(/^\.\//,'');
+  const hit=S.files.find(f=>f.path===ref||f.name===ref||f.name===ref+'.md'||f.path.endsWith('/'+ref)||f.path.endsWith('/'+ref+'.md'));
+  if(hit){S.dirty&&!confirm('Discard unsaved changes?')||openFile(hit);}else toast('Not in workspace: '+ref);
+}
+function fillMeta(f){
+  $('mTitle').value=f.fm.title||'';$('mType').value=f.fm.type||'';$('mStatus').value=f.fm.status||'';
+  $('mTags').value=Array.isArray(f.fm.tags)?f.fm.tags.join(', '):(f.fm.tags||'');
+  $('mFlow').value=f.fm.flow||'';$('mStep').value=f.fm.step||'';
+  const links=Array.isArray(f.fm.links)?f.fm.links:f.fm.links?[f.fm.links]:[];
+  $('linkList').innerHTML=links.map(l=>'<a href="#" data-open="'+esc(l)+'">→ '+esc(l)+'</a>').join('')||'<span class="dim">none</span>';
+  $('linkList').querySelectorAll('a').forEach(a=>a.onclick=e=>{e.preventDefault();jumpTo(a.dataset.open);});
+}
+$('metaTog').onclick=()=>{const o=$('meta').classList.toggle('open');$('metaTog').textContent='frontmatter '+(o?'▾':'▸');};
+$('toggleBtn').onclick=()=>{S.editMode=!S.editMode;renderDoc();if(S.editMode)$('raw').focus();};
+$('raw').addEventListener('input',()=>{S.dirty=true;});
+$('metaApply').onclick=()=>{
+  const f=S.cur;if(!f)return;
+  if(f.ext!=='md'&&f.ext!=='markdown'){toast('Frontmatter is for markdown files only');return;}
+  const {fm,body}=parseFM($('raw').value);
+  fm.title=$('mTitle').value.trim();fm.type=$('mType').value;fm.status=$('mStatus').value;
+  fm.tags=$('mTags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  fm.flow=$('mFlow').value.trim();fm.step=$('mStep').value?+$('mStep').value:'';
+  if(!fm.created)fm.created=new Date().toISOString().slice(0,10);
+  $('raw').value=buildFM(fm)+body;
+  S.dirty=true;renderDoc();toast('Frontmatter updated — remember to Save');
+};
+async function saveCur(){
+  const f=S.cur;if(!f)return;
+  $('saveBtn').textContent='…';
+  try{
+    const sha=await writeFile(f.path,$('raw').value,'edit: '+f.path,f.sha);
+    f.sha=sha;f.raw=$('raw').value;
+    const p=f.ext==='md'?parseFM(f.raw):{fm:{},body:f.raw};f.fm=p.fm;f.body=p.body;f.mtime=Date.now();
+    S.dirty=false;$('edTitle').textContent=f.fm.title||f.name;fillMeta(f);renderDoc();
+    toast('Committed ✓ '+f.name);
+  }catch(e){
+    toast(/409|does not match|conflict/i.test(e.message)?'Conflict — refresh workspace, then retry':'Save failed: '+e.message);
+  }
+  $('saveBtn').textContent='Save';
+}
+$('saveBtn').onclick=saveCur;
+
+/* ================= capture ================= */
+$('captureBtn').onclick=()=>{
+  if(!S.cfg){toast('Connect first');return;}
+  const bg=document.createElement('div');bg.className='modalBg';
+  bg.innerHTML='<div class="modal"><h3>Capture ＋</h3>'+
+    '<div class="frow"><label for="capT">title</label><input id="capT" placeholder="the thought…"></div>'+
+    '<div class="frow"><label for="capB">first lines (optional — refine later)</label><input id="capB"></div>'+
+    '<div class="modalBtns"><button class="btn ghost" id="capX">Cancel</button><button class="btn primary" id="capGo">Capture to _INBOX</button></div></div>';
+  document.body.appendChild(bg);
+  const close=()=>bg.remove();
+  bg.onclick=e=>{if(e.target===bg)close();};
+  bg.querySelector('#capX').onclick=close;
+  setTimeout(()=>bg.querySelector('#capT').focus(),80);
+  bg.querySelector('#capGo').onclick=async()=>{
+    const title=bg.querySelector('#capT').value.trim();if(!title)return;
+    const first=bg.querySelector('#capB').value.trim();
+    const date=new Date().toISOString().slice(0,10);
+    const slug=title.toLowerCase().replace(/[^a-z0-9æøå]+/g,'-').replace(/^-|-$/g,'').slice(0,60);
+    const path='_INBOX/'+date+'-'+slug+'.md';
+    const content=buildFM({title,type:'idea',status:'inbox',tags:[],created:date})+'# '+title+'\n\n'+(first?first+'\n':'');
+    bg.querySelector('#capGo').textContent='…';
+    try{
+      const sha=await writeFile(path,content,'capture: '+title);
+      const rec={path,name:path.split('/').pop(),dirPath:'_INBOX/',ext:'md',size:content.length,sha,raw:content,mtime:Date.now()};
+      const p=parseFM(content);rec.fm=p.fm;rec.body=p.body;
+      S.files.push(rec);close();toast('Captured → _INBOX');openFile(rec);
+    }catch(e){toast('Capture failed: '+e.message);bg.querySelector('#capGo').textContent='Capture to _INBOX';}
+  };
+};
+
+/* ================= settings / refresh ================= */
+$('refreshBtn').onclick=async()=>{if(S.dirty&&!confirm('Discard unsaved changes?'))return;S.dirty=false;
+  try{await loadTree();setView(S.view);toast('Refreshed');}catch(e){toast(e.message);}};
+$('settingsBtn').onclick=()=>{
+  if(confirm('Disconnect this repo and clear the token from this device?')){
+    store.del('wb_cfg');location.reload();
+  }};
+
+/* ================= boot ================= */
+$('connectBtn').onclick=async()=>{
+  const o=$('sOwner').value.trim(),r=$('sRepo').value.trim(),t=$('sToken').value.trim();
+  if(!o||!r||!t){$('setupErr').textContent='All three fields are needed.';return;}
+  $('connectBtn').textContent='Connecting…';$('setupErr').textContent='';
+  try{await connect(o,r,t);}
+  catch(e){$('setupErr').textContent=e.message;$('connectBtn').textContent='Connect';}
+};
+(async()=>{
+  const saved=store.get('wb_cfg');
+  if(saved){
+    try{const c=JSON.parse(saved);$('setup').querySelector('.lead').textContent='Reconnecting to '+c.owner+'/'+c.repo+'…';
+      S.cfg=c;await loadTree();
+      $('setup').hidden=true;$('hdr').hidden=false;$('tabs').hidden=false;
+      $('repoLbl').textContent=c.owner+'/'+c.repo+' · '+c.branch;setView('fork');
+    }catch(e){$('setup').querySelector('.lead').textContent='Reconnect failed ('+e.message+'). Enter details again.';store.del('wb_cfg');}
+  }
+})();
+</script>
+</body>
+</html>
