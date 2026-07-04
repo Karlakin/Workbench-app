@@ -25,95 +25,85 @@
   --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html{height:100%}
-body{font-family:var(--body);background:var(--cream);color:var(--navy);min-height:100%;padding-bottom:calc(64px + var(--sab))}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--body);background:var(--cream);color:var(--navy)}
 ::selection{background:var(--yellow);color:var(--navy)}
 button{font-family:inherit;cursor:pointer;font-size:inherit}
-input,select,textarea{font-size:16px} /* prevents iOS zoom */
+input,select,textarea{font-size:16px}
 :focus-visible{outline:2px solid var(--kraft-dark);outline-offset:2px}
-
-/* ---------- header ---------- */
-#hdr{position:sticky;top:0;z-index:20;background:var(--navy);color:var(--cream);padding:calc(10px + var(--sat)) 16px 10px;display:flex;align-items:center;gap:10px}
-#hdr .brand{font-family:var(--disp);font-weight:700;font-size:19px}
-#hdr .brand .semi{color:var(--yellow)}
-#hdr .repo{font-family:var(--mono);font-size:10.5px;color:rgba(247,243,236,.55);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-.icoBtn{background:none;border:1px solid rgba(247,243,236,.28);color:var(--cream);border-radius:8px;font-family:var(--disp);font-weight:600;font-size:12.5px;padding:7px 11px;min-height:34px}
-.icoBtn:active{background:rgba(247,243,236,.12)}
-
-/* ---------- generic ---------- */
-main{padding:18px 16px 28px;max-width:760px;margin:0 auto}
-.viewTitle{font-family:var(--disp);font-weight:700;font-size:22px;margin-bottom:2px}
-.viewSub{color:var(--navy-soft);font-size:13px;margin-bottom:16px;line-height:1.5}
-.btn{border:1px solid transparent;border-radius:10px;font-family:var(--disp);font-weight:600;font-size:14.5px;padding:12px 18px;min-height:44px;transition:transform .06s ease}
+.btn{border:1px solid transparent;border-radius:10px;font-family:var(--disp);font-weight:600;font-size:14px;padding:11px 16px;min-height:44px}
 .btn:active{transform:scale(.98)}
 .btn.primary{background:var(--kraft);color:var(--navy-deep)}
 .btn.navy{background:var(--navy);color:var(--cream)}
 .btn.ghost{background:var(--paper);border-color:var(--line);color:var(--navy)}
-.btn.sm{font-size:13px;padding:8px 13px;min-height:38px}
-.pill{display:inline-block;font-family:var(--mono);font-size:10px;padding:3px 9px;border-radius:999px;color:#fff;text-transform:lowercase}
+.pill{display:inline-block;font-family:var(--mono);font-size:9.5px;padding:2px 8px;border-radius:999px;color:#fff;text-transform:lowercase}
 .pill.inbox{background:var(--st-inbox);color:var(--navy-deep)}
 .pill.active{background:var(--st-active)}
 .pill.shaped{background:var(--st-shaped)}
 .pill.locked{background:var(--st-locked)}
 .pill.archived{background:var(--st-archived)}
-.empty{padding:34px 20px;text-align:center;color:var(--navy-soft);background:var(--paper);border:1px dashed var(--line);border-radius:12px;font-size:14px;line-height:1.7}
 .dim{color:var(--navy-soft);font-family:var(--mono);font-size:11px}
+.icoBtn{background:none;border:1px solid rgba(247,243,236,.28);color:var(--cream);border-radius:8px;font-family:var(--disp);font-weight:600;font-size:12.5px;padding:7px 11px;min-height:36px}
+.icoBtn.dk{border-color:var(--line);color:var(--navy);background:var(--paper)}
 
-/* ---------- setup ---------- */
-#setup{max-width:440px;margin:0 auto}
-#setup h1{font-family:var(--disp);font-weight:700;font-size:32px;line-height:1.15;margin:26px 0 4px}
-#setup h1 .semi{color:var(--kraft-dark)}
-#setup .lead{color:var(--navy-soft);font-size:14.5px;line-height:1.6;margin-bottom:22px}
-.frow{margin-bottom:14px}
-.frow label{display:block;font-family:var(--mono);font-size:11px;color:var(--navy-soft);margin-bottom:5px}
-.frow input{width:100%;font-family:var(--mono);padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--navy)}
-.note{font-size:12px;color:var(--navy-soft);line-height:1.6;margin-top:12px}
-#setupErr{color:#A33;font-size:13px;margin-top:10px;min-height:1em}
+/* ================= three-pane grid ================= */
+#app{display:grid;grid-template-columns:250px 330px 1fr;height:100dvh}
+body.sbHide #app{grid-template-columns:0 330px 1fr}
+body.sbHide #sb{display:none}
 
-/* ---------- fork ---------- */
-#forkGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
-.fCard{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--kraft);border-radius:12px;padding:14px;text-align:left}
-.fCard:active{border-color:var(--kraft-dark)}
-.fCard h3{font-family:var(--disp);font-weight:700;font-size:15px;word-break:break-word}
-.fCard .cnt{font-family:var(--mono);font-size:10px;color:var(--navy-soft);margin:2px 0 8px}
-.fCard .dots{display:flex;flex-wrap:wrap;gap:4px}
-.dot{font-family:var(--mono);font-size:9.5px;padding:2px 7px;border-radius:999px;color:#fff}
+/* ---------- sidebar (folders + flows) ---------- */
+#sb{background:var(--navy);color:var(--cream);display:flex;flex-direction:column;overflow:hidden}
+#sbBrand{font-family:var(--disp);font-weight:700;font-size:20px;padding:calc(14px + var(--sat)) 16px 4px}
+#sbBrand .semi{color:var(--yellow)}
+#sbRepo{font-family:var(--mono);font-size:9.5px;color:rgba(247,243,236,.5);padding:0 16px 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#sbScroll{flex:1;overflow-y:auto;padding:4px 8px 12px}
+.sbHead{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(247,243,236,.42);padding:14px 10px 5px}
+.sbRow{display:flex;align-items:center;gap:7px;width:100%;background:none;border:0;color:rgba(247,243,236,.85);font-family:var(--disp);font-weight:600;font-size:14px;padding:9px 10px;border-radius:8px;text-align:left;position:relative;min-height:40px}
+.sbRow:active{background:rgba(247,243,236,.1)}
+.sbRow.sel{background:rgba(247,243,236,.12);color:#fff}
+.sbRow.sel::before{content:"";position:absolute;left:-4px;top:7px;bottom:7px;width:4px;background:var(--yellow);border-radius:2px}
+.sbRow .tw{width:14px;text-align:center;color:var(--kraft);font-family:var(--mono);font-size:11px;flex:none}
+.sbRow .n{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:400;color:rgba(247,243,236,.45)}
+.sbKids{margin-left:15px;border-left:1px solid rgba(196,154,108,.25);padding-left:5px}
+#sbFoot{padding:10px 12px calc(12px + var(--sab));border-top:1px solid rgba(247,243,236,.1);display:flex;flex-direction:column;gap:8px}
+#sbFoot .row2{display:flex;gap:8px}
+#sbFoot .row2 .icoBtn{flex:1}
 
-/* ---------- files ---------- */
-#q{width:100%;font-family:var(--mono);font-size:16px;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--navy);margin-bottom:10px}
-.chipRow{display:flex;gap:7px;overflow-x:auto;padding-bottom:8px;margin-bottom:8px;-webkit-overflow-scrolling:touch}
-.chip{flex:none;font-family:var(--mono);font-size:11.5px;padding:8px 13px;border-radius:999px;border:1px solid var(--line);background:var(--paper);color:var(--navy-soft);min-height:34px}
+/* ---------- list column ---------- */
+#list{background:var(--paper);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
+#listHead{padding:calc(10px + var(--sat)) 14px 8px;border-bottom:1px solid var(--line-soft)}
+#listTop{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+#sbToggle{display:none}
+#listTitle{font-family:var(--disp);font-weight:700;font-size:17px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#listCount{font-family:var(--mono);font-size:10px;color:var(--navy-soft)}
+#q{width:100%;font-family:var(--mono);font-size:16px;padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--cream);color:var(--navy)}
+#chips{display:flex;gap:6px;overflow-x:auto;padding:8px 14px 2px;-webkit-overflow-scrolling:touch}
+.chip{flex:none;font-family:var(--mono);font-size:11px;padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:var(--cream);color:var(--navy-soft);min-height:31px}
 .chip.on{background:var(--navy);border-color:var(--navy);color:var(--cream)}
-.chip.tagc.on{background:var(--kraft);border-color:var(--kraft);color:var(--navy-deep)}
-.fileCard{width:100%;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:9px;display:block}
-.fileCard:active{background:rgba(196,154,108,.1)}
-.fileCard .t{font-family:var(--disp);font-weight:600;font-size:15px;margin-bottom:2px}
-.fileCard .p{font-family:var(--mono);font-size:10px;color:var(--navy-soft);margin-bottom:7px;word-break:break-all}
-.fileCard .meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.tagmini{font-family:var(--mono);font-size:10.5px;color:var(--kraft-dark)}
+#rows{flex:1;overflow-y:auto;padding:8px 10px calc(12px + var(--sab))}
+.noteRow{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line-soft);padding:11px 8px;border-radius:9px}
+.noteRow:active{background:var(--cream)}
+.noteRow.sel{background:var(--navy);}
+.noteRow.sel .t{color:#fff}
+.noteRow.sel .snip,.noteRow.sel .d{color:rgba(247,243,236,.6)}
+.noteRow .t{font-family:var(--disp);font-weight:700;font-size:14.5px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.noteRow .m{display:flex;align-items:center;gap:7px;overflow:hidden}
+.noteRow .d{font-family:var(--mono);font-size:10px;color:var(--kraft-dark);flex:none}
+.noteRow .snip{font-size:12px;color:var(--navy-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.noteRow .sn{font-family:var(--mono);font-size:9.5px;color:var(--kraft-dark)}
+.empty{padding:30px 18px;text-align:center;color:var(--navy-soft);font-size:13.5px;line-height:1.7}
 
-/* ---------- flows ---------- */
-.flowCard{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
-.flowCard h3{font-family:var(--disp);font-weight:700;font-size:16px;margin-bottom:10px}
-.flowCard h3 .n{font-family:var(--mono);font-weight:400;font-size:10.5px;color:var(--navy-soft);margin-left:7px}
-.stepRow{display:flex;align-items:stretch;gap:0}
-.stepRail{width:22px;flex:none;position:relative}
-.stepRail::before{content:"";position:absolute;left:10px;top:0;bottom:0;width:1.5px;background:var(--kraft)}
-.stepRail::after{content:"";position:absolute;left:6px;top:18px;width:10px;height:10px;border-radius:50%;background:var(--cream);border:2px solid var(--navy)}
-.stepRow:first-child .stepRail::before{top:18px}
-.stepRow:last-child .stepRail::before{bottom:calc(100% - 18px)}
-.step{flex:1;border:1.5px solid var(--navy);border-radius:10px;background:var(--cream);padding:9px 13px;margin:4px 0;text-align:left;min-height:44px}
-.step:active{background:var(--yellow)}
-.step .sn{font-family:var(--mono);font-size:9.5px;color:var(--kraft-dark);display:block}
-.step .st{font-family:var(--disp);font-weight:600;font-size:13.5px}
-
-/* ---------- editor (full-screen sheet) ---------- */
-#editor{position:fixed;inset:0;z-index:30;background:var(--cream);display:flex;flex-direction:column}
-#edHead{background:var(--navy);color:var(--cream);padding:calc(8px + var(--sat)) 12px 8px;display:flex;align-items:center;gap:8px}
-#edHead .ti{flex:1;min-width:0}
+/* ---------- editor pane ---------- */
+#pane{display:flex;flex-direction:column;overflow:hidden;background:var(--cream)}
+#paneHead{background:var(--navy);color:var(--cream);padding:calc(8px + var(--sat)) 12px 8px;display:flex;align-items:center;gap:8px}
+#backBtn{display:none}
+#paneHead .ti{flex:1;min-width:0}
 #edTitle{font-family:var(--disp);font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #edPath{font-family:var(--mono);font-size:9.5px;color:rgba(247,243,236,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#edBody{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(20px + var(--sab))}
+#edBody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(24px + var(--sab))}
+#paneEmpty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--navy-soft);gap:10px;padding:20px;text-align:center}
+#paneEmpty .mark{font-family:var(--disp);font-weight:700;font-size:44px;color:var(--kraft)}
+#paneEmpty .mark .semi{color:var(--yellow);text-shadow:0 0 0 var(--navy)}
 #metaTog{width:100%;text-align:left;background:var(--paper);border:0;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--navy-soft);padding:11px 16px}
 #meta{background:var(--paper);border-bottom:1px solid var(--line);padding:14px 16px;display:none}
 #meta.open{display:block}
@@ -122,7 +112,7 @@ main{padding:18px 16px 28px;max-width:760px;margin:0 auto}
 .mrow input,.mrow select{width:100%;font-family:var(--mono);padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--cream);color:var(--navy)}
 .mrow .half{display:flex;gap:8px}
 #linkList a{display:block;font-family:var(--mono);font-size:11.5px;color:var(--navy);background:var(--cream);border:1px solid var(--line);border-radius:7px;padding:9px 11px;text-decoration:none;margin-bottom:5px}
-#render{padding:22px 18px;font-size:16px;line-height:1.65;max-width:72ch;margin:0 auto}
+#render{padding:24px 22px;font-size:16px;line-height:1.65;max-width:74ch}
 #render h1,#render h2,#render h3{font-family:var(--disp);font-weight:700;line-height:1.25;margin:1.2em 0 .45em}
 #render h1{font-size:24px;margin-top:.2em}
 #render h2{font-size:19px;border-bottom:1px solid var(--kraft-faint);padding-bottom:.22em}
@@ -140,121 +130,143 @@ main{padding:18px 16px 28px;max-width:760px;margin:0 auto}
 #render table{border-collapse:collapse;margin:.85em 0;width:100%}
 #render th,#render td{padding:7px 10px;font-size:13px;border-bottom:1px solid var(--line-soft);text-align:left}
 #render th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;background:var(--paper)}
-#raw{width:100%;min-height:64vh;border:0;background:transparent;padding:18px 16px;font-family:var(--mono);font-size:14px;line-height:1.6;color:var(--navy);resize:none}
+#raw{width:100%;min-height:70%;border:0;background:transparent;padding:18px 18px;font-family:var(--mono);font-size:14px;line-height:1.6;color:var(--navy);resize:none}
 #raw:focus{outline:none}
 
-/* ---------- tab bar ---------- */
-#tabs{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--navy);display:flex;padding:6px 8px calc(6px + var(--sab))}
-.tb{flex:1;background:none;border:0;color:rgba(247,243,236,.62);font-family:var(--disp);font-weight:600;font-size:11.5px;padding:8px 4px 6px;border-radius:10px;position:relative;min-height:48px}
-.tb .g{display:block;font-size:17px;margin-bottom:1px}
-.tb.on{color:#fff}
-.tb.on::after{content:"";position:absolute;left:26%;right:26%;bottom:3px;height:3px;background:var(--yellow);border-radius:2px}
-.tb.cap{color:var(--navy-deep);background:var(--kraft);margin:0 4px;border-radius:12px}
-.tb.cap:active{background:#D2A97C}
+/* ---------- setup ---------- */
+#setup{position:fixed;inset:0;z-index:40;background:var(--cream);overflow-y:auto;padding:calc(30px + var(--sat)) 22px 40px}
+#setup .in{max-width:440px;margin:0 auto}
+#setup h1{font-family:var(--disp);font-weight:700;font-size:32px;line-height:1.15;margin-bottom:4px}
+#setup h1 .semi{color:var(--kraft-dark)}
+#setup .lead{color:var(--navy-soft);font-size:14.5px;line-height:1.6;margin-bottom:22px}
+.frow{margin-bottom:14px}
+.frow label{display:block;font-family:var(--mono);font-size:11px;color:var(--navy-soft);margin-bottom:5px}
+.frow input{width:100%;font-family:var(--mono);padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--navy)}
+.note{font-size:12px;color:var(--navy-soft);line-height:1.6;margin-top:12px}
+#setupErr{color:#A33;font-size:13px;margin-top:10px;min-height:1em}
 
-/* toast + progress */
-#toast{position:fixed;bottom:calc(76px + var(--sab));left:50%;transform:translateX(-50%) translateY(90px);background:var(--navy);color:var(--cream);font-family:var(--disp);font-weight:600;font-size:13px;padding:11px 18px;border-radius:10px;transition:transform .25s ease;z-index:60;border-left:4px solid var(--yellow);max-width:86vw}
-#toast.show{transform:translateX(-50%) translateY(0)}
-#prog{position:fixed;top:0;left:0;height:3px;background:var(--yellow);width:0;z-index:40;transition:width .2s ease}
-
-/* modal */
-.modalBg{position:fixed;inset:0;background:rgba(8,28,51,.55);display:flex;align-items:flex-end;justify-content:center;z-index:50}
-.modal{background:var(--paper);border-radius:16px 16px 0 0;padding:20px 18px calc(20px + var(--sab));width:100%;max-width:560px;max-height:82vh;overflow:auto}
+/* modal + toast + progress */
+.modalBg{position:fixed;inset:0;background:rgba(8,28,51,.55);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modal{background:var(--paper);border-radius:16px;padding:20px 18px;width:100%;max-width:520px;max-height:86vh;overflow:auto}
 .modal h3{font-family:var(--disp);font-weight:700;font-size:18px;margin-bottom:14px}
 .modalBtns{display:flex;gap:10px;margin-top:14px}
 .modalBtns .btn{flex:1}
+#toast{position:fixed;bottom:calc(24px + var(--sab));left:50%;transform:translateX(-50%) translateY(90px);background:var(--navy);color:var(--cream);font-family:var(--disp);font-weight:600;font-size:13px;padding:11px 18px;border-radius:10px;transition:transform .25s ease;z-index:60;border-left:4px solid var(--yellow);max-width:86vw}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#prog{position:fixed;top:0;left:0;height:3px;background:var(--yellow);width:0;z-index:55;transition:width .2s ease}
+#scrim{display:none;position:fixed;inset:0;background:rgba(8,28,51,.4);z-index:29}
+
+/* ================= responsive ================= */
+@media (max-width:1000px) and (min-width:701px){
+  #app{grid-template-columns:340px 1fr}
+  #sb{position:fixed;left:0;top:0;bottom:0;width:270px;z-index:30;transform:translateX(-102%);transition:transform .22s ease}
+  body.sbOpen #sb{transform:none}
+  body.sbOpen #scrim{display:block}
+  #sbToggle{display:inline-block}
+}
+@media (max-width:700px){
+  #app{grid-template-columns:1fr}
+  #sb{position:fixed;left:0;top:0;bottom:0;width:270px;z-index:30;transform:translateX(-102%);transition:transform .22s ease}
+  body.sbOpen #sb{transform:none}
+  body.sbOpen #scrim{display:block}
+  #sbToggle{display:inline-block}
+  #pane{position:fixed;inset:0;z-index:28;transform:translateX(102%);transition:transform .22s ease}
+  body.fileOpen #pane{transform:none}
+  #backBtn{display:inline-block}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
-@media (min-width:700px){ .modalBg{align-items:center} .modal{border-radius:16px} }
 </style>
 </head>
 <body>
-
 <div id="prog"></div>
+<div id="scrim"></div>
 
-<header id="hdr" hidden>
-  <span class="brand">workbench<span class="semi">;</span></span>
-  <span class="repo" id="repoLbl"></span>
-  <button class="icoBtn" id="refreshBtn">↻</button>
-  <button class="icoBtn" id="settingsBtn">⚙</button>
-</header>
+<div id="app">
 
-<main>
-
-  <section id="setup">
-    <h1>Harvest anywhere<span class="semi">.</span></h1>
-    <p class="lead">Your notes live in a private GitHub repo. This app reads and writes them through the GitHub API — every save is a commit. The token stays on this device only.</p>
-    <div class="frow"><label for="sOwner">github username</label><input id="sOwner" autocapitalize="none" autocorrect="off" placeholder="karl…"></div>
-    <div class="frow"><label for="sRepo">notes repository</label><input id="sRepo" autocapitalize="none" autocorrect="off" placeholder="workbench-space"></div>
-    <div class="frow"><label for="sToken">fine-grained access token</label><input id="sToken" type="password" autocapitalize="none" placeholder="github_pat_…"></div>
-    <button class="btn navy" id="connectBtn" style="width:100%">Connect</button>
-    <div id="setupErr"></div>
-    <p class="note">Token setup: github.com → Settings → Developer settings → Fine-grained tokens → scope it to <b>only</b> the notes repo, permission <b>Contents: read &amp; write</b>, 90-day expiry. Nothing else.</p>
-  </section>
-
-  <section id="forkView" hidden>
-    <div class="viewTitle">Fork</div>
-    <div class="viewSub">The workspace by folder. Tap a branch to see its files.</div>
-    <div id="forkGrid"></div>
-  </section>
-
-  <section id="filesView" hidden>
-    <div class="viewTitle">Files</div>
-    <div class="viewSub" id="filesSub"></div>
-    <input id="q" type="search" placeholder="search titles, names, tags…">
-    <div class="chipRow" id="statusChips"></div>
-    <div class="chipRow" id="tagBar"></div>
-    <div id="fileList"></div>
-  </section>
-
-  <section id="flowsView" hidden>
-    <div class="viewTitle">Flows</div>
-    <div class="viewSub">Files with <b>flow:</b> in their frontmatter, ordered by <b>step:</b>.</div>
-    <div id="flowList"></div>
-  </section>
-
-</main>
-
-<div id="editor" hidden>
-  <div id="edHead">
-    <button class="icoBtn" id="closeBtn">‹ Back</button>
-    <div class="ti"><div id="edTitle"></div><div id="edPath"></div></div>
-    <button class="icoBtn" id="toggleBtn">Edit</button>
-    <button class="icoBtn" id="saveBtn" style="border-color:var(--yellow)">Save</button>
-  </div>
-  <div id="edBody">
-    <button id="metaTog">frontmatter ▸</button>
-    <div id="meta">
-      <div class="mrow"><label for="mTitle">title</label><input id="mTitle"></div>
-      <div class="mrow"><label>type / status</label>
-        <div class="half">
-          <select id="mType"><option></option><option>idea</option><option>note</option><option>project</option><option>reference</option><option>flow-step</option></select>
-          <select id="mStatus"><option></option><option>inbox</option><option>active</option><option>shaped</option><option>locked</option><option>archived</option></select>
-        </div>
-      </div>
-      <div class="mrow"><label for="mTags">tags (comma separated)</label><input id="mTags" autocapitalize="none"></div>
-      <div class="mrow"><label>flow / step</label>
-        <div class="half"><input id="mFlow" autocapitalize="none" style="flex:2"><input id="mStep" type="number" min="1" style="flex:1"></div>
-      </div>
-      <div class="mrow"><label>links</label><div id="linkList"></div></div>
-      <button class="btn primary sm" id="metaApply" style="width:100%">Apply to file</button>
+  <aside id="sb">
+    <div id="sbBrand">workbench<span class="semi">;</span></div>
+    <div id="sbRepo"></div>
+    <div id="sbScroll">
+      <button class="sbRow sel" id="allRow"><span class="tw">◎</span>All notes<span class="n" id="allN"></span></button>
+      <div class="sbHead">Folders</div>
+      <div id="sbTree"></div>
+      <div class="sbHead">Flows</div>
+      <div id="sbFlows"></div>
     </div>
-    <div id="render"></div>
-    <textarea id="raw" hidden spellcheck="false" autocapitalize="sentences"></textarea>
-  </div>
+    <div id="sbFoot">
+      <button class="btn primary" id="captureBtn">＋ Capture</button>
+      <div class="row2">
+        <button class="icoBtn" id="refreshBtn">↻ Refresh</button>
+        <button class="icoBtn" id="settingsBtn">⚙</button>
+      </div>
+    </div>
+  </aside>
+
+  <section id="list">
+    <div id="listHead">
+      <div id="listTop">
+        <button class="icoBtn dk" id="sbToggle">☰</button>
+        <div id="listTitle">All notes</div>
+        <span id="listCount"></span>
+      </div>
+      <input id="q" type="search" placeholder="search notes…">
+    </div>
+    <div id="chips"></div>
+    <div id="rows"></div>
+  </section>
+
+  <section id="pane">
+    <div id="paneHead">
+      <button class="icoBtn" id="backBtn">‹ Notes</button>
+      <div class="ti"><div id="edTitle">workbench</div><div id="edPath"></div></div>
+      <button class="icoBtn" id="toggleBtn" hidden>Edit</button>
+      <button class="icoBtn" id="saveBtn" style="border-color:var(--yellow)" hidden>Save</button>
+    </div>
+    <div id="paneEmpty">
+      <div class="mark">w<span class="semi">;</span></div>
+      <div>Select a note, or capture a new one.</div>
+    </div>
+    <div id="edBody" hidden>
+      <button id="metaTog">frontmatter ▸</button>
+      <div id="meta">
+        <div class="mrow"><label for="mTitle">title</label><input id="mTitle"></div>
+        <div class="mrow"><label>type / status</label>
+          <div class="half">
+            <select id="mType"><option></option><option>idea</option><option>note</option><option>project</option><option>reference</option><option>flow-step</option></select>
+            <select id="mStatus"><option></option><option>inbox</option><option>active</option><option>shaped</option><option>locked</option><option>archived</option></select>
+          </div>
+        </div>
+        <div class="mrow"><label for="mTags">tags (comma separated)</label><input id="mTags" autocapitalize="none"></div>
+        <div class="mrow"><label>flow / step</label>
+          <div class="half"><input id="mFlow" autocapitalize="none" style="flex:2"><input id="mStep" type="number" min="1" style="flex:1"></div>
+        </div>
+        <div class="mrow"><label>links</label><div id="linkList"></div></div>
+        <button class="btn primary" id="metaApply" style="width:100%">Apply to file</button>
+      </div>
+      <div id="render"></div>
+      <textarea id="raw" hidden spellcheck="false" autocapitalize="sentences"></textarea>
+    </div>
+  </section>
+
 </div>
 
-<nav id="tabs" hidden>
-  <button class="tb on" data-v="fork"><span class="g">⑂</span>Fork</button>
-  <button class="tb" data-v="files"><span class="g">☰</span>Files</button>
-  <button class="tb cap" id="captureBtn"><span class="g">＋</span>Capture</button>
-  <button class="tb" data-v="flows"><span class="g">→</span>Flows</button>
-</nav>
+<div id="setup"><div class="in">
+  <h1>Harvest anywhere<span class="semi">.</span></h1>
+  <p class="lead">Your notes live in a private GitHub repo. This app reads and writes them through the GitHub API — every save is a commit. The token stays on this device only.</p>
+  <div class="frow"><label for="sOwner">github username</label><input id="sOwner" autocapitalize="none" autocorrect="off"></div>
+  <div class="frow"><label for="sRepo">notes repository</label><input id="sRepo" autocapitalize="none" autocorrect="off"></div>
+  <div class="frow"><label for="sToken">fine-grained access token</label><input id="sToken" type="password" autocapitalize="none"></div>
+  <button class="btn navy" id="connectBtn" style="width:100%">Connect</button>
+  <div id="setupErr"></div>
+  <p class="note">Token: Settings → Developer settings → Fine-grained tokens → only the notes repo → Contents: read &amp; write.</p>
+</div></div>
 
 <div id="toast"></div>
 <script>
 "use strict";
 /* ================= state ================= */
-const S={ cfg:null, files:[], view:'fork', cur:null, fStatus:null, fTag:null, fDir:null, q:'', editMode:false, dirty:false, sha:{} };
+const S={ cfg:null, files:[], cur:null, scope:{type:'all'}, fStatus:null, q:'',
+  editMode:false, dirty:false, openDirs:new Set(['_INBOX']) };
 const TEXT_EXT=['md','txt','markdown','csv','json','yaml','yml'];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -345,36 +357,26 @@ function md(src){
 /* ================= github api ================= */
 async function gh(path,opts={}){
   const r=await fetch('https://api.github.com'+path,Object.assign({},opts,{headers:Object.assign({
-    'Authorization':'Bearer '+S.cfg.token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},opts.headers||{})}));
+    'Authorization':'Bearer '+S.cfg.token,'Accept':'application/vnd.github+json'},opts.headers||{})}));
   if(r.status===401||r.status===403) throw new Error('Token rejected ('+r.status+'). Check scope and expiry.');
   if(r.status===404) throw new Error('Not found: '+path);
   const d=await r.json().catch(()=>({}));
   if(!r.ok) throw new Error(d.message||('GitHub error '+r.status));
   return d;
 }
-async function connect(owner,repo,token){
-  S.cfg={owner,repo,token,branch:null};
-  const info=await gh('/repos/'+owner+'/'+repo);
-  S.cfg.branch=info.default_branch;
-  store.set('wb_cfg',JSON.stringify({owner,repo,token,branch:S.cfg.branch}));
-  await loadTree();
-  $('setup').hidden=true; $('hdr').hidden=false; $('tabs').hidden=false;
-  $('repoLbl').textContent=owner+'/'+repo+' · '+S.cfg.branch+' · v1.1';
-  setView('fork');
-}
+const encodePath=p=>p.split('/').map(encodeURIComponent).join('/');
 async function loadTree(){
   prog(8);
   const t=await gh('/repos/'+S.cfg.owner+'/'+S.cfg.repo+'/git/trees/'+encodeURIComponent(S.cfg.branch)+'?recursive=1');
   if(t.truncated) toast('Large repo — listing truncated');
   const blobs=(t.tree||[]).filter(n=>n.type==='blob'&&TEXT_EXT.includes(n.path.split('.').pop().toLowerCase())&&!n.path.split('/').some(p=>p.startsWith('.')));
   S.files=blobs.map(n=>({path:n.path,name:n.path.split('/').pop(),dirPath:n.path.includes('/')?n.path.slice(0,n.path.lastIndexOf('/')+1):'',
-    ext:n.path.split('.').pop().toLowerCase(),size:n.size||0,sha:n.sha,raw:null,fm:{},body:'',mtime:0}));
-  // fetch contents in batches of 6, with retry; report failures instead of hiding them
-  let done=0, failed=0;
+    ext:n.path.split('.').pop().toLowerCase(),size:n.size||0,sha:n.sha,raw:null,fm:{},body:'',mtime:0,err:null}));
+  let done=0,failed=0;
   for(let i=0;i<S.files.length;i+=6){
     await Promise.all(S.files.slice(i,i+6).map(async f=>{
-      if(!(await fetchContent(f))) failed++;
-      done++; prog(10+85*done/S.files.length);
+      if(!(await fetchContent(f)))failed++;
+      done++;prog(10+85*done/Math.max(1,S.files.length));
     }));
   }
   prog(100);
@@ -384,124 +386,138 @@ async function fetchContent(f,tries=3){
   for(let a=0;a<tries;a++){
     try{
       const d=await gh('/repos/'+S.cfg.owner+'/'+S.cfg.repo+'/contents/'+encodePath(f.path)+'?ref='+encodeURIComponent(S.cfg.branch));
-      f.raw=b64dec(d.content); f.sha=d.sha;
+      f.raw=b64dec(d.content);f.sha=d.sha;f.err=null;
       const p=f.ext==='md'?parseFM(f.raw):{fm:{},body:f.raw};
-      f.fm=p.fm; f.body=p.body;
-      if(f.fm.created&&!f.mtime) f.mtime=new Date(f.fm.created).getTime()||0;
+      f.fm=p.fm;f.body=p.body;
+      if(f.fm.created&&!f.mtime)f.mtime=new Date(f.fm.created).getTime()||0;
       return true;
-    }catch(e){ f.err=e.message; await new Promise(r=>setTimeout(r,400*(a+1))); }
+    }catch(e){f.err=e.message;await new Promise(r=>setTimeout(r,400*(a+1)));}
   }
-  f.raw=null; return false;
+  f.raw=null;return false;
 }
-const encodePath=p=>p.split('/').map(encodeURIComponent).join('/');
 async function writeFile(path,content,message,sha){
   const body={message,content:b64enc(content),branch:S.cfg.branch};
-  if(sha) body.sha=sha;
+  if(sha)body.sha=sha;
   const d=await gh('/repos/'+S.cfg.owner+'/'+S.cfg.repo+'/contents/'+encodePath(path),{method:'PUT',body:JSON.stringify(body)});
   return d.content.sha;
 }
 
-/* ================= views ================= */
-function setView(v){
-  S.view=v;
-  document.querySelectorAll('.tb[data-v]').forEach(t=>t.classList.toggle('on',t.dataset.v===v));
-  for(const [id,name] of [['forkView','fork'],['filesView','files'],['flowsView','flows']]) $(id).hidden=v!==name;
-  window.scrollTo(0,0);
-  if(v==='fork')renderFork(); if(v==='files')renderFiles(); if(v==='flows')renderFlows();
+/* ================= sidebar ================= */
+function snippet(f){
+  const line=(f.body||'').split('\n').find(l=>l.trim()&&!l.startsWith('#'));
+  return line?line.trim().slice(0,80):'';
 }
-document.querySelectorAll('.tb[data-v]').forEach(t=>t.onclick=()=>setView(t.dataset.v));
-
-function renderFork(){
-  const dirs={};
-  S.files.forEach(f=>{ const top=f.dirPath?f.dirPath.split('/')[0]:'(root)';
-    const d=dirs[top]=dirs[top]||{n:0,st:{}}; d.n++;
-    if(f.fm.status)d.st[f.fm.status]=(d.st[f.fm.status]||0)+1; });
-  const names=Object.keys(dirs).sort();
-  if(!names.length){ $('forkGrid').innerHTML='<div class="empty">Empty workspace.<br>Tap <b>＋ Capture</b> to create the first note — it lands in _INBOX/ automatically.</div>'; return; }
-  $('forkGrid').innerHTML=names.map(n=>{const d=dirs[n];
-    const dots=Object.entries(d.st).map(([s,c])=>'<span class="dot" style="background:var(--st-'+s+')'+(s==='inbox'?';color:var(--navy-deep)':'')+'">'+s+' '+c+'</span>').join('');
-    return '<button class="fCard" data-d="'+esc(n)+'"><h3>'+esc(n)+'</h3><div class="cnt">'+d.n+' files</div><div class="dots">'+dots+'</div></button>';}).join('');
-  $('forkGrid').querySelectorAll('.fCard').forEach(c=>c.onclick=()=>{S.fDir=c.dataset.d==='(root)'?'':c.dataset.d;S.q='';$('q').value='';setView('files');});
+function renderSidebar(){
+  $('allN').textContent=S.files.length;
+  $('allRow').classList.toggle('sel',S.scope.type==='all');
+  // nested folder tree from paths
+  const root={};
+  S.files.forEach(f=>{
+    if(!f.dirPath)return;
+    let node=root;
+    for(const part of f.dirPath.split('/').filter(Boolean)){
+      node=node[part]=node[part]||{__k:{},__n:0};
+      node.__n++;const k=node.__k;node=k;
+    }
+  });
+  const build=(kids,prefix)=>{
+    return Object.keys(kids).sort().map(name=>{
+      const nd=kids[name],path=prefix+name+'/';
+      const hasKids=Object.keys(nd.__k).length>0;
+      const open=S.openDirs.has(path);
+      const sel=S.scope.type==='folder'&&S.scope.val===path;
+      let h='<button class="sbRow'+(sel?' sel':'')+'" data-f="'+esc(path)+'"><span class="tw" data-t="'+esc(path)+'">'+(hasKids?(open?'▾':'▸'):'·')+'</span>'+esc(name)+'<span class="n">'+nd.__n+'</span></button>';
+      if(hasKids&&open)h+='<div class="sbKids">'+build(nd.__k,path)+'</div>';
+      return h;
+    }).join('');
+  };
+  $('sbTree').innerHTML=build(root,'')||'<div class="sbHead" style="text-transform:none;letter-spacing:0">no folders yet</div>';
+  $('sbTree').querySelectorAll('.sbRow').forEach(b=>b.onclick=e=>{
+    const tw=e.target.closest('.tw');
+    if(tw&&tw.dataset.t){const p=tw.dataset.t;S.openDirs.has(p)?S.openDirs.delete(p):S.openDirs.add(p);renderSidebar();return;}
+    setScope({type:'folder',val:b.dataset.f});
+  });
+  // flows
+  const flows={};
+  S.files.forEach(f=>{if(f.fm.flow)flows[f.fm.flow]=(flows[f.fm.flow]||0)+1;});
+  const names=Object.keys(flows).sort();
+  $('sbFlows').innerHTML=names.map(n=>{
+    const sel=S.scope.type==='flow'&&S.scope.val===n;
+    return '<button class="sbRow'+(sel?' sel':'')+'" data-fl="'+esc(n)+'"><span class="tw">→</span>'+esc(n)+'<span class="n">'+flows[n]+'</span></button>';
+  }).join('')||'<div class="sbHead" style="text-transform:none;letter-spacing:0">add flow: to a note</div>';
+  $('sbFlows').querySelectorAll('.sbRow').forEach(b=>b.onclick=()=>setScope({type:'flow',val:b.dataset.fl}));
+}
+$('allRow').onclick=()=>setScope({type:'all'});
+function setScope(sc){
+  S.scope=sc;
+  $('listTitle').textContent=sc.type==='all'?'All notes':sc.type==='flow'?'Flow: '+sc.val:sc.val.replace(/\/$/,'');
+  document.body.classList.remove('sbOpen');
+  renderSidebar();renderList();
 }
 
-function matches(f){
-  if(S.fDir!=null&&(S.fDir===''?f.dirPath!=='':f.dirPath.split('/')[0]!==S.fDir))return false;
+/* ================= list ================= */
+function inScope(f){
+  if(S.scope.type==='folder'&&!f.dirPath.startsWith(S.scope.val))return false;
+  if(S.scope.type==='flow'&&f.fm.flow!==S.scope.val)return false;
   if(S.fStatus&&f.fm.status!==S.fStatus)return false;
-  if(S.fTag&&!(Array.isArray(f.fm.tags)?f.fm.tags:[f.fm.tags]).includes(S.fTag))return false;
   if(S.q){const q=S.q.toLowerCase();
     const hay=(f.name+' '+f.path+' '+(f.fm.title||'')+' '+(Array.isArray(f.fm.tags)?f.fm.tags.join(' '):f.fm.tags||'')+' '+(f.fm.flow||'')).toLowerCase();
     if(!hay.includes(q)&&!(f.body||'').toLowerCase().includes(q))return false;}
   return true;
 }
-function renderFiles(){
-  const rows=S.files.filter(matches).sort((a,b)=>(b.mtime-a.mtime)||a.path.localeCompare(b.path));
-  $('filesSub').textContent=rows.length+' of '+S.files.length+' files'+(S.fDir!=null?' · in '+(S.fDir||'root'):'');
+function renderList(){
+  const rows=S.files.filter(inScope);
+  if(S.scope.type==='flow')rows.sort((a,b)=>(a.fm.step||999)-(b.fm.step||999));
+  else rows.sort((a,b)=>(b.mtime-a.mtime)||a.path.localeCompare(b.path));
+  $('listCount').textContent=rows.length;
   const stats=['inbox','active','shaped','locked','archived'];
-  const dirChip=S.fDir!=null?'<button class="chip on" id="dirChip">📁 '+esc(S.fDir||'root')+' ✕</button>':'';
-  $('statusChips').innerHTML=dirChip+stats.map(s=>'<button class="chip'+(S.fStatus===s?' on':'')+'" data-s="'+s+'">'+s+'</button>').join('');
-  if(S.fDir!=null)$('dirChip').onclick=()=>{S.fDir=null;renderFiles();};
-  $('statusChips').querySelectorAll('.chip[data-s]').forEach(c=>c.onclick=()=>{S.fStatus=S.fStatus===c.dataset.s?null:c.dataset.s;renderFiles();});
-  const counts={};
-  S.files.forEach(f=>(Array.isArray(f.fm.tags)?f.fm.tags:f.fm.tags?[f.fm.tags]:[]).forEach(t=>counts[t]=(counts[t]||0)+1));
-  const top=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,12);
-  $('tagBar').innerHTML=top.map(([t,c])=>'<button class="chip tagc'+(S.fTag===t?' on':'')+'" data-t="'+esc(t)+'">#'+esc(t)+' '+c+'</button>').join('');
-  $('tagBar').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{S.fTag=S.fTag===c.dataset.t?null:c.dataset.t;renderFiles();});
-  if(!rows.length){$('fileList').innerHTML='<div class="empty">Nothing matches. Clear a filter, or capture something new.</div>';return;}
-  $('fileList').innerHTML=rows.map(f=>'<button class="fileCard" data-i="'+S.files.indexOf(f)+'">'+
-    '<div class="t">'+esc(f.fm.title||f.name)+'</div><div class="p">'+esc(f.path)+'</div><div class="meta">'+
-    (f.fm.status?'<span class="pill '+esc(f.fm.status)+'">'+esc(f.fm.status)+'</span>':'')+
-    (Array.isArray(f.fm.tags)?f.fm.tags:f.fm.tags?[f.fm.tags]:[]).map(t=>'<span class="tagmini">#'+esc(String(t))+'</span>').join('')+
-    (f.fm.flow?'<span class="dim">→ '+esc(f.fm.flow)+(f.fm.step?' · '+f.fm.step:'')+'</span>':'')+
-    '</div></button>').join('');
-  $('fileList').querySelectorAll('.fileCard').forEach(c=>c.onclick=()=>openFile(S.files[+c.dataset.i]));
-}
-$('q').addEventListener('input',e=>{S.q=e.target.value.trim();renderFiles();});
-
-function renderFlows(){
-  const g={};
-  S.files.forEach(f=>{if(f.fm.flow)(g[f.fm.flow]=g[f.fm.flow]||[]).push(f);});
-  const names=Object.keys(g).sort();
-  if(!names.length){$('flowList').innerHTML='<div class="empty">No flows yet.<br>Add <b>flow: my-flow</b> and <b>step: 1</b> to a file\u2019s frontmatter and it appears here.</div>';return;}
-  $('flowList').innerHTML=names.map(n=>{
-    const steps=g[n].sort((a,b)=>(a.fm.step||999)-(b.fm.step||999));
-    return '<div class="flowCard"><h3>'+esc(n)+'<span class="n">'+steps.length+' steps</span></h3>'+
-      steps.map(f=>'<div class="stepRow"><div class="stepRail"></div><button class="step" data-i="'+S.files.indexOf(f)+'">'+
-      '<span class="sn">'+(f.fm.step?'step '+f.fm.step:'unordered')+'</span><span class="st">'+esc(f.fm.title||f.name)+'</span></button></div>').join('')+'</div>';
+  $('chips').innerHTML=stats.map(s=>'<button class="chip'+(S.fStatus===s?' on':'')+'" data-s="'+s+'">'+s+'</button>').join('');
+  $('chips').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{S.fStatus=S.fStatus===c.dataset.s?null:c.dataset.s;renderList();});
+  if(!rows.length){$('rows').innerHTML='<div class="empty">Nothing here yet.<br>＋ Capture drops a new note into _INBOX.</div>';return;}
+  $('rows').innerHTML=rows.map(f=>{
+    const d=f.mtime?new Date(f.mtime).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'';
+    return '<button class="noteRow'+(f===S.cur?' sel':'')+'" data-i="'+S.files.indexOf(f)+'">'+
+      '<div class="t">'+esc(f.fm.title||f.name)+'</div>'+
+      '<div class="m">'+(S.scope.type==='flow'&&f.fm.step?'<span class="sn">step '+f.fm.step+'</span>':'')+
+      (d?'<span class="d">'+d+'</span>':'')+
+      (f.fm.status?'<span class="pill '+esc(f.fm.status)+'">'+esc(f.fm.status)+'</span>':'')+
+      '<span class="snip">'+esc(snippet(f))+'</span></div></button>';
   }).join('');
-  $('flowList').querySelectorAll('.step').forEach(s=>s.onclick=()=>openFile(S.files[+s.dataset.i]));
+  $('rows').querySelectorAll('.noteRow').forEach(r=>r.onclick=()=>openFile(S.files[+r.dataset.i]));
 }
+$('q').addEventListener('input',e=>{S.q=e.target.value.trim();renderList();});
 
-/* ================= editor ================= */
+/* ================= editor pane ================= */
 async function openFile(f){
   if(S.dirty&&!confirm('Discard unsaved changes?'))return;
   S.cur=f;S.dirty=false;S.editMode=false;
+  document.body.classList.add('fileOpen');
+  $('paneEmpty').hidden=true;$('edBody').hidden=false;
+  $('toggleBtn').hidden=false;$('saveBtn').hidden=false;
   $('edTitle').textContent=f.fm.title||f.name;
   $('edPath').textContent=f.path;
   $('meta').classList.remove('open');$('metaTog').textContent='frontmatter ▸';
-  $('editor').hidden=false;document.body.style.overflow='hidden';
   $('edBody').scrollTop=0;
+  renderList();
   if(f.raw==null){
     $('raw').value='';$('render').hidden=false;$('raw').hidden=true;
     $('render').innerHTML='<p class="dim">Loading '+esc(f.name)+' from GitHub…</p>';
     const ok=await fetchContent(f);
     if(S.cur!==f)return;
-    if(!ok){
-      $('render').innerHTML='<p><b>Couldn\u2019t download this file.</b></p><p class="dim">'+esc(f.err||'network error')+'</p><p>Check the connection, go ‹ Back and tap the file again.</p>';
-      return;
-    }
+    if(!ok){$('render').innerHTML='<p><b>Couldn\u2019t download this file.</b></p><p class="dim">'+esc(f.err||'network error')+'</p><p>Check the connection and tap the note again.</p>';return;}
     $('edTitle').textContent=f.fm.title||f.name;
   }
   $('raw').value=f.raw||'';
   fillMeta(f);renderDoc();
 }
-function closeEditor(){
+function closePane(){
   if(S.dirty&&!confirm('Discard unsaved changes?'))return;
-  S.dirty=false;S.cur=null;$('editor').hidden=true;document.body.style.overflow='';
-  if(S.view==='files')renderFiles(); if(S.view==='flows')renderFlows(); if(S.view==='fork')renderFork();
+  S.dirty=false;S.cur=null;document.body.classList.remove('fileOpen');
+  renderList();
 }
-$('closeBtn').onclick=closeEditor;
+$('backBtn').onclick=closePane;
 function renderDoc(){
-  const f=S.cur;
+  const f=S.cur;if(!f)return;
   $('render').hidden=S.editMode;$('raw').hidden=!S.editMode;
   $('toggleBtn').textContent=S.editMode?'Preview':'Edit';
   if(!S.editMode){
@@ -513,7 +529,7 @@ function renderDoc(){
 function jumpTo(ref){
   ref=ref.replace(/^\.\//,'');
   const hit=S.files.find(f=>f.path===ref||f.name===ref||f.name===ref+'.md'||f.path.endsWith('/'+ref)||f.path.endsWith('/'+ref+'.md'));
-  if(hit){S.dirty&&!confirm('Discard unsaved changes?')||openFile(hit);}else toast('Not in workspace: '+ref);
+  hit?openFile(hit):toast('Not in workspace: '+ref);
 }
 function fillMeta(f){
   $('mTitle').value=f.fm.title||'';$('mType').value=f.fm.type||'';$('mStatus').value=f.fm.status||'';
@@ -545,14 +561,18 @@ async function saveCur(){
     const sha=await writeFile(f.path,$('raw').value,'edit: '+f.path,f.sha);
     f.sha=sha;f.raw=$('raw').value;
     const p=f.ext==='md'?parseFM(f.raw):{fm:{},body:f.raw};f.fm=p.fm;f.body=p.body;f.mtime=Date.now();
-    S.dirty=false;$('edTitle').textContent=f.fm.title||f.name;fillMeta(f);renderDoc();
+    S.dirty=false;$('edTitle').textContent=f.fm.title||f.name;
+    fillMeta(f);renderDoc();renderSidebar();renderList();
     toast('Committed ✓ '+f.name);
   }catch(e){
-    toast(/409|does not match|conflict/i.test(e.message)?'Conflict — refresh workspace, then retry':'Save failed: '+e.message);
+    toast(/409|does not match|conflict/i.test(e.message)?'Conflict — tap ↻ Refresh, then retry':'Save failed: '+e.message);
   }
   $('saveBtn').textContent='Save';
 }
 $('saveBtn').onclick=saveCur;
+document.addEventListener('keydown',e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key==='s'){e.preventDefault();if(S.cur)saveCur();}
+});
 
 /* ================= capture ================= */
 $('captureBtn').onclick=()=>{
@@ -560,7 +580,7 @@ $('captureBtn').onclick=()=>{
   const bg=document.createElement('div');bg.className='modalBg';
   bg.innerHTML='<div class="modal"><h3>Capture ＋</h3>'+
     '<div class="frow"><label for="capT">title</label><input id="capT" placeholder="the thought…"></div>'+
-    '<div class="frow"><label for="capB">first lines (optional — refine later)</label><input id="capB"></div>'+
+    '<div class="frow"><label for="capB">first lines (optional)</label><input id="capB"></div>'+
     '<div class="modalBtns"><button class="btn ghost" id="capX">Cancel</button><button class="btn primary" id="capGo">Capture to _INBOX</button></div></div>';
   document.body.appendChild(bg);
   const close=()=>bg.remove();
@@ -577,22 +597,40 @@ $('captureBtn').onclick=()=>{
     bg.querySelector('#capGo').textContent='…';
     try{
       const sha=await writeFile(path,content,'capture: '+title);
-      const rec={path,name:path.split('/').pop(),dirPath:'_INBOX/',ext:'md',size:content.length,sha,raw:content,mtime:Date.now()};
+      const rec={path,name:path.split('/').pop(),dirPath:'_INBOX/',ext:'md',size:content.length,sha,raw:content,mtime:Date.now(),err:null};
       const p=parseFM(content);rec.fm=p.fm;rec.body=p.body;
-      S.files.push(rec);close();toast('Captured → _INBOX');openFile(rec);
+      S.files.push(rec);close();
+      renderSidebar();renderList();toast('Captured → _INBOX');openFile(rec);
+      S.editMode=true;renderDoc();
     }catch(e){toast('Capture failed: '+e.message);bg.querySelector('#capGo').textContent='Capture to _INBOX';}
   };
 };
 
-/* ================= settings / refresh ================= */
-$('refreshBtn').onclick=async()=>{if(S.dirty&&!confirm('Discard unsaved changes?'))return;S.dirty=false;
-  try{await loadTree();setView(S.view);toast('Refreshed');}catch(e){toast(e.message);}};
+/* ================= chrome ================= */
+$('sbToggle').onclick=()=>document.body.classList.toggle('sbOpen');
+$('scrim').onclick=()=>document.body.classList.remove('sbOpen');
+$('refreshBtn').onclick=async()=>{
+  if(S.dirty&&!confirm('Discard unsaved changes?'))return;S.dirty=false;
+  try{await loadTree();
+    if(S.cur){const again=S.files.find(f=>f.path===S.cur.path);S.cur=again||null;if(again)openFile(again);else closePane();}
+    renderSidebar();renderList();toast('Refreshed');
+  }catch(e){toast(e.message);}
+};
 $('settingsBtn').onclick=()=>{
-  if(confirm('Disconnect this repo and clear the token from this device?')){
-    store.del('wb_cfg');location.reload();
-  }};
+  if(confirm('Disconnect this repo and clear the token from this device?')){store.del('wb_cfg');location.reload();}
+};
 
 /* ================= boot ================= */
+async function connect(owner,repo,token){
+  S.cfg={owner,repo,token,branch:null};
+  const info=await gh('/repos/'+owner+'/'+repo);
+  S.cfg.branch=info.default_branch;
+  store.set('wb_cfg',JSON.stringify({owner,repo,token,branch:S.cfg.branch}));
+  await loadTree();
+  $('setup').style.display='none';
+  $('sbRepo').textContent=owner+'/'+repo+' · '+S.cfg.branch+' · v2.0';
+  renderSidebar();setScope({type:'all'});
+}
 $('connectBtn').onclick=async()=>{
   const o=$('sOwner').value.trim(),r=$('sRepo').value.trim(),t=$('sToken').value.trim();
   if(!o||!r||!t){$('setupErr').textContent='All three fields are needed.';return;}
@@ -603,11 +641,13 @@ $('connectBtn').onclick=async()=>{
 (async()=>{
   const saved=store.get('wb_cfg');
   if(saved){
-    try{const c=JSON.parse(saved);$('setup').querySelector('.lead').textContent='Reconnecting to '+c.owner+'/'+c.repo+'…';
-      S.cfg=c;await loadTree();
-      $('setup').hidden=true;$('hdr').hidden=false;$('tabs').hidden=false;
-      $('repoLbl').textContent=c.owner+'/'+c.repo+' · '+c.branch+' · v1.1';setView('fork');
-    }catch(e){$('setup').querySelector('.lead').textContent='Reconnect failed ('+e.message+'). Enter details again.';store.del('wb_cfg');}
+    try{const c=JSON.parse(saved);
+      document.querySelector('#setup .lead').textContent='Reconnecting to '+c.owner+'/'+c.repo+'…';
+      await connect(c.owner,c.repo,c.token);
+    }catch(e){
+      document.querySelector('#setup .lead').textContent='Reconnect failed ('+e.message+'). Enter details again.';
+      store.del('wb_cfg');
+    }
   }
 })();
 </script>
